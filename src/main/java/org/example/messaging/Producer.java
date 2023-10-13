@@ -47,6 +47,7 @@ public class Producer implements AutoCloseable {
     public void publish(Message message){
         try{
             var msg = session.createObjectMessage();
+            msg.setIntProperty("round", message.round);
             msg.setIntProperty("id", message.id);
             msg.setStringProperty("message", message.message);
             producer.send(msg);
@@ -68,9 +69,9 @@ public class Producer implements AutoCloseable {
         }catch (Exception ignored){}
     }
 
-    public static void Initialize(Producer producer, int id, String messageText){
+    public static void Initialize(Producer producer, int round, int id, String messageText){
         Thread thread = new Thread(() -> {
-            Message message = new Message(id,messageText);
+            Message message = new Message(round,id,messageText);
             if(producer.isInError()){
                 System.out.println(producer.getError());
             }else{

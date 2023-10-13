@@ -16,30 +16,25 @@ public class Main {
 
         //CODICE DEI PROCESSI
 
-        Consumer consumer = new Consumer("tcp://127.0.0.1:61616", "topic", Integer.parseInt(args[0]));
+        Consumer consumer = new Consumer("tcp://127.0.0.1:61616", "topic", Integer.parseInt(args[0]), Integer.parseInt(args[4]), Integer.parseInt(args[1]),Integer.parseInt(args[2]));
         consumer.Initialize(consumer);
+
+        System.out.println("Give me 5 seconds please, I'm checking that everything is ok");
         try{
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         }catch(Exception ignored){}
-        System.out.println("Give me 1 minute please");
-        try{
-            Thread.sleep(60000);
-        }catch(Exception ignored){}
-        System.out.println("I'm checking that everything is ok");
-        Coordinator coordinator1 = new Coordinator(args[1], args[2]);
-        Coordinator.CanStart();
-        Garay.start(Integer.parseInt(args[0]),Integer.parseInt(args[4]), consumer);
+        Coordinator coordinator1 = new Coordinator(args[1], Integer.parseInt(args[0]),Integer.parseInt(args[2]));
+        //Coordinator.CanStart();
+        Garay.GarayInitilize(Integer.parseInt(args[4]));
 
 
 
         //CODICE DEL COORDINATORE
-     /*   try{
+        /*try{
         Thread.sleep(5000);
-        }catch(Exception ignored){}
-       Coordinator coordinator1 = new Coordinator(args[1], args[2]);
-       coordinator1.start(Integer.parseInt(args[0]),Integer.parseInt(args[3]));
-*/
-
+        }catch(Exception ignored){}*/
+       /*Coordinator coordinator1 = new Coordinator(args[1], Integer.parseInt(args[0]), Integer.parseInt(args[2]));
+       coordinator1.start(Integer.parseInt(args[0]),Integer.parseInt(args[3]),Integer.parseInt(args[2]));*/
     }
 
 }
