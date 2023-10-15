@@ -74,6 +74,8 @@ public class Coordinator {
         return numeroCasuale;
     }*/
 
+
+
     public static int[] ByzantineInTheRound(){
         String [] resultInString = byzantineArray.split(", ");
         int[] result = new int[resultInString.length];
