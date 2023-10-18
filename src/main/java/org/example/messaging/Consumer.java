@@ -111,7 +111,8 @@ public class Consumer implements AutoCloseable{
 
                 if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
-                        coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
+                        //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
+                        coordinator.byzantineBehaviour = "NoMessage";
                         firstMessage = true;
                     } else {
                         //System.out.println("HO Ricevuto il messaggio da " + msg.getIntProperty("id") + " che dice " + msg.getStringProperty("message"));
@@ -129,7 +130,6 @@ public class Consumer implements AutoCloseable{
                 }
                 else {
                     if (msgReceived.round % 2 != 0) {
-                        //System.out.println("È DISPARIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
                         MessagesReceivedOdd.set(msg.getIntProperty("id"), msgReceived);
                         for (int i = 0; i < MessagesReceivedOdd.size(); i++) {
                             //System.out.println("Nel vettore MessagesReceivedOdd alla posizione " + i + " c'è il messaggio " + MessagesReceivedOdd.get(i).message);

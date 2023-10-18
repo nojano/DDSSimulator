@@ -59,6 +59,19 @@ public class Coordinator {
                         Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                         Producer.Initialize(producer1,-1,-1,result);
                         System.out.println("I've sent " + result);
+                    case 2:
+                        Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
+                        Producer.Initialize(producer,-1,-1,"NoMessage");
+                        try{
+                            Thread.sleep(2000);
+                        }catch(Exception ignored){}
+                        for(int j=0; j<Integer.parseInt(byzantinePerRounds); j++){
+                            byzantines[j] = RandomNumber(numberOfProcesses);
+                        }
+                        String result = String.join(", ", byzantines);
+                        Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
+                        Producer.Initialize(producer1,-1,-1,result);
+                        System.out.println("I've sent " + result);
                 }
                 rounds ++;
             }
