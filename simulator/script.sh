@@ -24,7 +24,7 @@ if [ "$C" -eq 1 ]; then
         echo "I have done with process number $i"
         # Add -d to the command above to not show the container running
     done
-else
+elif [ "$C" -eq 2 ]; then
     docker build ./processMsg1 -t processmsg1
 
     for ((i = 0; i < N; i++))
@@ -33,6 +33,18 @@ else
         echo "I have done with process number $i"
         # Add -d to the command above to not show the container running
     done
+elif [ "$C" -eq 3 ]; then
+    docker build ./processUpToYou -t processuptoyou
+
+    for ((i = 0; i < N; i++))
+    do
+    	echo "Please enter the initialization value of $i"
+	read V
+        docker run -d --network host processuptoyou $N $B $R $C $i $V
+        echo "I have done with process number $i"
+        # Add -d to the command above to not show the container running
+    done
+    
 fi
 
 

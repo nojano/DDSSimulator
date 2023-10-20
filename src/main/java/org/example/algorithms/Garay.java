@@ -8,6 +8,7 @@ import org.example.models.Message;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Garay {
 
@@ -35,6 +36,8 @@ public class Garay {
 
     static boolean kingByzantine;
 
+    static boolean firstInitialization = true;
+
     public Garay(int totalNumberOfProcesses, int idOfTheProcess, int numberOfByzantines){
         this.round = 0;
         this.totalNumberOfProcesses = totalNumberOfProcesses;
@@ -51,10 +54,10 @@ public class Garay {
         }
     }
 
-    public static void startEven(Coordinator coordinator) {
+    public static void startEven(Coordinator coordinator, /*Useful only for UpToYou*/int value) {
         //System.out.println("BYZANTINE DO " + coordinator.byzantineBehaviour);
         if(coordinator.byzantineBehaviour == "NoMessage") { //THE BYZANTINE DOES NOT SEND ANY MESSAGE
-            System.out.println("The byzantine will not send message. Just for computational reason, the value that is chosen by the byzantine process will be -1");
+            /*System.out.println("The byzantine will not send message. Just for computational reason, the value that is chosen by the byzantine process will be -1");
             Space(1);
             if (round % 2 == 0) {
                 System.out.println("ROUND " + round + ": Universal exchange");
@@ -143,6 +146,8 @@ public class Garay {
                 MV = String.join(", ", MVValues);
 
                 System.out.println("The final decision of this round is: " + v);
+                Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer1, -5, idOfTheProcess, String.valueOf(v));
                 Space(7);
                 round++;
                 Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
@@ -202,11 +207,8 @@ public class Garay {
                         if (go == true) {
                             for (int j = 0; j < Consumer.MessagesReceivedOdd.size(); j++) {
 
-                                /*System.out.println("Dimensione di messagesReceived è: " + Consumer.MessagesReceived.size());
-                                System.out.println("Dimensione totale processi:" + totalNumberOfProcesses);*/
                                 ECHO[i][j] = ExtrapolateInt(i, Consumer.MessagesReceivedOdd)[j];
                             }
-                            //System.out.println("Ho fatto con l'mv di " + i);
                         }
                     }
                     System.out.println("ECHO is: ");
@@ -259,13 +261,15 @@ public class Garay {
 
                 }
                 System.out.println("The final decision of this round is: " + v);
+                Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer, -5, idOfTheProcess, String.valueOf(v));
                 Space(5);
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
-            }
+            }*/
         }
-        else{ //THE BYZANTINE SEND OR 0 OR 1
+        else if(coordinator.byzantineBehaviour == "Message1"){ //THE BYZANTINE SEND OR 0 OR 1
             /*System.out.println("The value chosen by the byzantine is always 1");
             Space(1);
             if (round % 2 == 0) {
@@ -277,6 +281,7 @@ public class Garay {
                     byzantine = false;
                     cured = true;
                     System.out.println("I'm cured now");
+                    v=-1;
                     Space(1);
                 }
                 System.out.print("The vector of byzantines is: [");
@@ -295,9 +300,7 @@ public class Garay {
                 }
                 if(byzantine == true){
                     v = 1;
-                    *//*Space(1);
-                    Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
-                    Producer.Initialize(producer, round, idOfTheProcess, String.valueOf(v));*//*
+                    Space(1);
                     System.out.println("I'm byzantine in this round, so my value v is" + v );
                     Space(1);
                     for (int i = 0; i < MVValues.length; i++) {
@@ -353,6 +356,8 @@ public class Garay {
 
 
                 System.out.println("The final decision of this round is: " + v);
+                Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer2, -5, idOfTheProcess, String.valueOf(v));
                 Space(7);
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
@@ -370,6 +375,10 @@ public class Garay {
                     byzantine = false;
                     cured = true;
                     System.out.println("I'm cured now");
+                    for (int i = 0; i < MVValues.length; i++) {
+                        MVValues[i] = String.valueOf(-1);
+                    }
+                    MV = String.join(", ", MVValues);
                     Space(1);
                 }
                 System.out.print("The vector of byzantines is: [");
@@ -416,9 +425,6 @@ public class Garay {
                     for (int i = 0; i < Consumer.MessagesReceivedOdd.size(); i++) {
 
                             for (int j = 0; j < Consumer.MessagesReceivedOdd.size(); j++) {
-
-                                *//*System.out.println("Dimensione di messagesReceived è: " + Consumer.MessagesReceived.size());
-                                System.out.println("Dimensione totale processi:" + totalNumberOfProcesses);*//*
                                 ECHO[i][j] = ExtrapolateInt(i, Consumer.MessagesReceivedOdd)[j];
                             }
                             //System.out.println("Ho fatto con l'mv di " + i);
@@ -467,11 +473,286 @@ public class Garay {
                     }
                 }
                 System.out.println("The final decision of this round is: " + v);
+                Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer2, -5, idOfTheProcess, String.valueOf(v));
                 Space(5);
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
             }*/
+        }
+        else if(coordinator.byzantineBehaviour == "UpToYou") {
+            if(firstInitialization == true){
+                v = value;
+                System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
+                firstInitialization = false;
+            }
+            System.out.println("The value chosen by the byzantine depends on the values");
+            Space(1);
+            if (round % 2 == 0) {
+                System.out.println("ROUND " + round + ": Universal exchange");
+                Space(2);
+                //System.out.println("My id is " + idOfTheProcess);
+                Space(1);
+                if (byzantine == true) {
+                    byzantine = false;
+                    cured = true;
+                    v=-1;
+                    System.out.println("I'm cured now");
+                    Space(1);
+                }
+                System.out.print("The vector of byzantines is: [");
+                for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
+                    byzantinesInThisRound[i] = GoGoGo(coordinator.ByzantineInTheRound())[i];
+                    System.out.print(GoGoGo(coordinator.ByzantineInTheRound())[i] + ", ");
+                }
+                System.out.println("] ");
+                Space(1);
+                ArrayList<Message> MVi = new ArrayList<>();
+                InitializeMV(totalNumberOfProcesses, MVi,"-1");
+                for (int i = 0; i < byzantinesInThisRound.length; i++) {
+                    if (idOfTheProcess == byzantinesInThisRound[i]) {
+                        byzantine = true;
+                    }
+                }
+                if(byzantine == true){
+                    Space(1);
+                    System.out.println("I'm byzantine in this round");
+                    Space(1);
+                    for (int i = 0; i < MVValues.length; i++) {
+                        MVValues[i] = String.valueOf(-1);
+                    }
+                    MV = String.join(", ", MVValues);
+
+                    try {
+                        Thread.sleep(1500 * totalNumberOfProcesses);
+                    } catch (Exception ignored) {
+                    }
+
+
+                    for (int i = 0; i < Consumer.MessagesReceived.size(); i++) {
+                        boolean go = true;
+                        for(int j=0; j<byzantinesInThisRound.length; j++){
+                            if(i== byzantinesInThisRound[j]){
+                                Message msg0 = new Message(round,i,"-1");
+                                MVi.set(i,msg0);
+                                go=false;
+                            }
+                        }
+                        if(go==true) {
+                            MVi.set(Consumer.MessagesReceived.get(i).id, Consumer.MessagesReceived.get(i));
+                            while (Integer.parseInt(MVi.get(i).message) == -2) {
+                                MVi.set(Consumer.MessagesReceived.get(i).id, Consumer.MessagesReceived.get(i));
+                                //System.out.println(Integer.parseInt(MVi.get(i).message));
+                            }
+                        }
+                    }
+                    int B = 0;
+                    for (int i = 0; i < MVi.size(); i++) {
+                        if (Integer.parseInt(MVi.get(i).message) == 1) {
+                            B = B + 1;
+                        }
+                        //System.out.println("C è " + v);
+                    }
+                    Space(1);
+                    if (B >= 0.5 * (totalNumberOfProcesses-1)) {
+                        v = 0;
+                    } else {
+                        v = 1;
+                    }
+                    Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
+                    Producer.Initialize(producer, round, idOfTheProcess, String.valueOf(v));// Process sends its first decision;
+                    System.out.println("I've decided the value " + v + "after the check on the others decision and I'm sending it");
+                    Space(1);
+                }
+                if (byzantine == false) {
+                    Producer producer = new Producer("tcp://127.0.0.1:61616", "topic");
+                    Producer.Initialize(producer, round, idOfTheProcess, String.valueOf(v));// Process sends its first decision;
+                    System.out.println("I've decided the value " + v + " and I'm sending it");
+                    Space(1);
+
+
+                    try {
+                        Thread.sleep(2000 * totalNumberOfProcesses);
+                    } catch (Exception ignored) {
+                    }
+
+                    for (int i = 0; i < Consumer.MessagesReceived.size(); i++) {
+                        MVi.set(Consumer.MessagesReceived.get(i).id, Consumer.MessagesReceived.get(i));
+                        while (Integer.parseInt(MVi.get(i).message) == -2) {
+                            MVi.set(Consumer.MessagesReceived.get(i).id, Consumer.MessagesReceived.get(i));
+                            //System.out.println(Integer.parseInt(MVi.get(i).message));
+                        }
+                    }
+                    System.out.print("The vector MV is [");
+
+                    C = 0;
+                    for (int i = 0; i < MVi.size(); i++) {
+                        System.out.print(MVi.get(i).message + ",");
+                        if (Integer.parseInt(MVi.get(i).message) == 1) {
+                            //System.out.println("È uguale a 1");
+                            C = C + 1;
+                        }
+                        //System.out.println("C è " + v);
+                    }
+                    System.out.println("]");
+                    Space(1);
+                    System.out.println("C is " + C);
+                    Space(1);
+                    if (C >= 0.5 * totalNumberOfProcesses) {
+                        v = 1;
+                    } else {
+                        v = 0;
+                    }// It checks the MV and it puts the most common choice in the variable v
+                    System.out.println("The V chosen after the check on MV is " + v);
+                    Space(1);
+                    for (int i = 0; i < MVi.size(); i++) {
+                        MVValues[i] = MVi.get(i).message;
+                    }
+                    MV = String.join(", ", MVValues);
+                }
+
+                System.out.println("The final decision of this round is: " + v);
+                Space(7);
+                Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer2, -5, idOfTheProcess, String.valueOf(v));
+                round++;
+                Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer1, round, idOfTheProcess, "-2");
+
+
+            } else {
+                System.out.println("ROUND " + round + ": Reconstruction and king's broadcast");
+                Space(2);
+                //System.out.println("My id is " + idOfTheProcess);
+                Space(1);
+
+
+                if (byzantine == true) {
+                    byzantine = false;
+                    cured = true;
+                    System.out.println("I'm cured now");
+                    Space(1);
+                }
+                System.out.print("The vector of byzantines is: [");
+                for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
+                    byzantinesInThisRound[i] = GoGoGo(coordinator.ByzantineInTheRound())[i];
+                    System.out.print(GoGoGo(coordinator.ByzantineInTheRound())[i] + ", ");
+                }
+                System.out.println("] ");
+                Space(1);
+                for (int i = 0; i < byzantinesInThisRound.length; i++) {
+                    //System.out.println("My id is " + idOfTheProcess + " and the byzantine is " + byzantinesInThisRound[i]);
+                    if (idOfTheProcess == byzantinesInThisRound[i]) {
+                        byzantine = true;
+                    }
+                }
+                if(byzantine == true){
+                    System.out.println("I'm byzantine in this round, so I will set my MV equal to the opposite of the MV of the previous round");
+                    System.out.print("First my MV was: [");
+                    if (v == 0){
+                        v=1;
+                    }
+                    if(v == 1){
+                        v=0;
+                    }
+                    for (int i = 0; i < MVValues.length; i++) {
+                        System.out.print(MVValues[i] + ", ");
+                    }
+                    System.out.println("] ");
+                    Space(1);
+                    System.out.print("But now is: [");
+                    for (int i = 0; i < MVValues.length; i++) {
+                        if(Integer.parseInt(MVValues[i]) == 0){
+                            MVValues[i] = String.valueOf(1);
+                        }
+                        else{
+                            MVValues[i] = String.valueOf(0);
+                        }
+                        System.out.print(MVValues[i] + ", ");
+                    }
+                    System.out.println("] ");
+                    MV = String.join(", ", MVValues);
+                    Space(1);
+                    Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                    Producer.Initialize(producer2, round, idOfTheProcess, MV);// Process sends MV
+                    System.out.println("I'm sending the following MV: [" + MV + "]");
+                }
+
+                if (byzantine == false) {
+                    int[][] ECHO = new int[totalNumberOfProcesses][totalNumberOfProcesses];
+                    Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
+                    Producer.Initialize(producer1, round, idOfTheProcess, MV);// Process sends MV
+                    System.out.println("I'm sending the following MV: [" + MV + "]");
+                    Space(1);
+                    try {
+                        Thread.sleep(3000 * totalNumberOfProcesses);//We need to wait in order to receive all the MV
+                    } catch (Exception ignored) {
+                    }
+                    for (int i = 0; i < ECHO.length; i++) {
+                        for (int j = 0; j < ECHO.length; j++) {
+                            ECHO[i][j] = -1;
+                        }
+                    }
+                    for (int i = 0; i < Consumer.MessagesReceivedOdd.size(); i++) {
+
+                        for (int j = 0; j < Consumer.MessagesReceivedOdd.size(); j++) {
+                            ECHO[i][j] = ExtrapolateInt(i, Consumer.MessagesReceivedOdd)[j];
+                        }
+                        //System.out.println("Ho fatto con l'mv di " + i);
+                    }
+                    System.out.println("ECHO is: ");
+                    for (int riga = 0; riga < ECHO.length; riga++) {
+                        for (int colonna = 0; colonna < ECHO[riga].length; colonna++) {
+                            System.out.print(ECHO[riga][colonna] + " ");
+                        }
+                        System.out.println();
+                    }
+                    Space(1);
+
+                    if (cured == true) {
+                        v = Reconstruct(ECHO, totalNumberOfProcesses, byzantinesInThisRound);
+                        System.out.println("I'm exited from the reconstruct method and my choice is " + v);
+                        Space(1);
+                        cured = false;
+                    }
+
+                }
+
+                king = (round % totalNumberOfProcesses) + 1;
+                String kingChoice = "null";
+                System.out.println("The king of the round is the process number " + king);
+                Space(1);
+
+                if (idOfTheProcess == king) {
+                    Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                    Producer.Initialize(producer2, -4, idOfTheProcess, Integer.toString(v));// Process sends its first decision;
+                    System.out.println("I'm the king and i send the value v: " + v);
+                    Space(1);
+                }
+                try {
+                    Thread.sleep(2000 * totalNumberOfProcesses);
+                } catch (Exception ignored) {
+                }
+
+                kingChoice = Consumer.kingMsg.message;
+
+                if(byzantine == false) {
+                    if (Integer.parseInt(kingChoice) == 0 || Integer.parseInt(kingChoice) == 1) {
+                        if (C < (totalNumberOfProcesses - 2 * numberOfByzantines)) {
+                            v = Integer.parseInt(kingChoice);
+                        }
+                    }
+                }
+                System.out.println("The final decision of this round is: " + v);
+                Space(5);
+                Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer2, -5, idOfTheProcess, String.valueOf(v));
+                Space(5);
+                round++;
+                Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
+                Producer.Initialize(producer1, round, idOfTheProcess, "-2");
+            }
         }
     }
 
@@ -542,18 +823,35 @@ public class Garay {
         return vector;
     }
 
-    /*private static int ByzantineBehaviour(Coordinator coordinator){
-        if(coordinator.byzantineBehaviour == "NoMessage"){
-            return -1;
+    private static int Input(){
+        String input;
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.print("Enter input (or type 'exit' to quit): ");
+            input = scanner.nextLine();
+
+            if (input.equalsIgnoreCase("exit")) {
+                break;
+            }
         }
-        else if(coordinator.byzantineBehaviour =="Message1"){
-            return 1;
+        scanner.close();
+        return Integer.parseInt(input);
+    }
+
+    private static int InputVector(){
+        String input;
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.print("Enter input (or type 'exit' to quit): ");
+            input = scanner.nextLine();
+
+            if (input.equalsIgnoreCase("exit")) {
+                break;
+            }
         }
-        else if(coordinator.byzantineBehaviour =="Message0"){
-            return 0;
-        }
-        return -1;
-    }*/
+        scanner.close();
+        return Integer.parseInt(input);
+    }
 
     private static void Space(int Space){
         for(int i=0; i<Space; i++){

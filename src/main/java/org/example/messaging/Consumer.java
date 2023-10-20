@@ -41,10 +41,11 @@ public class Consumer implements AutoCloseable{
 
 
 
-    public Consumer(String brokerUrl, String topicName, int totalNumberOfProcesses, int personalId, int numberOfByzantine, int rounds){
+    public Consumer(String brokerUrl, String topicName, int totalNumberOfProcesses, int personalId, int numberOfByzantine, int rounds,/*Useful only for UpToYou*/int v){
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceived);
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceivedOdd);
-        coordinator = new Coordinator(String.valueOf(numberOfByzantine),totalNumberOfProcesses,rounds);
+
+        coordinator = new Coordinator(String.valueOf(numberOfByzantine),totalNumberOfProcesses,rounds);     //PROCESS CODE
         var factory = new ActiveMQConnectionFactory(brokerUrl);
         try{
             connection = factory.createConnection();
@@ -53,7 +54,7 @@ public class Consumer implements AutoCloseable{
             var topicDestionation = session.createTopic(topicName);
             consumer = session.createConsumer(topicDestionation);
             worker = new Thread(() ->
-                    DoWork(totalNumberOfProcesses, personalId, numberOfByzantine));
+                    DoWork(totalNumberOfProcesses, personalId, numberOfByzantine, rounds, v));
         }catch (Exception ex){
             inError = true;
             error = ex.getMessage();
@@ -89,37 +90,49 @@ public class Consumer implements AutoCloseable{
         }catch (Exception ignored){
         }
     }
-    private void DoWork(int totalNumberOfProcesses, int id, int nByzantine){
-        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine);
-        //InitializeMV(totalNumberOfProcesses);
+    private void DoWork(int totalNumberOfProcesses, int id, int nByzantine, int rounds, /*Useful only for UpToYou*/int v){
+        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine);                                      //PROCESS CODE
         while(isRunning) {
             try {
                 var msg = consumer.receive();
                 msgReceived = new Message(msg.getIntProperty("round"), msg.getIntProperty("id"),msg.getStringProperty("message"));
                 //System.out.println("È arrivato il messaggio del round " + msgReceived.round + " dall'id " + msgReceived.id + " che dice " + msgReceived.message);
 
-                /*if(id == -1 && Integer.parseInt(msgReceived.message) == -2){
+                //COORDINATOR CODE BEGINS
 
-                    System.out.println("Helloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+               /* if(msgReceived.id != -1 && msgReceived.round != -5) {
+                    Coordinator.howManyMessages++;
+                    if(Integer.parseInt(msgReceived.message) == -2){
+                        Coordinator.howManyMessages--;
+                    }
+                }
+
+
+                if(id == -1 && Integer.parseInt(msgReceived.message) == -2){
                     if(Coordinator.answers[msgReceived.id] < msgReceived.round) {
-                        System.out.println("I'm filling answer of -1");
                         Coordinator.answers[msgReceived.id]= msgReceived.round;
                         Coordinator.start(totalNumberOfProcesses,1, rounds);
                     }
+                }
+                if (msgReceived.id != -1 && msgReceived.round == -5){
+                    Coordinator.choices[msgReceived.id] = Integer.parseInt(msgReceived.message);
                 }*/
 
+              //COORDINATOR CODE ENDS
 
+
+                // PROCESS CODE BEGINS
                 if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
                         //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
-                        coordinator.byzantineBehaviour = "NoMessage";
+                        coordinator.byzantineBehaviour = "UpToYou";                     //ATTENZIONE QUI
                         firstMessage = true;
                     } else {
                         //System.out.println("HO Ricevuto il messaggio da " + msg.getIntProperty("id") + " che dice " + msg.getStringProperty("message"));
                         coordinator.byzantineArray = msg.getStringProperty("message");
                         //System.out.println("mi è arrivato il messaggio dei bizantini ed è " + coordinator.byzantineArray);
                         Thread worker1 = new Thread(() -> {
-                            garay.startEven(coordinator);
+                            garay.startEven(coordinator,v);
                         });
                         worker1.start();
                         firstMessage = false;
@@ -129,7 +142,7 @@ public class Consumer implements AutoCloseable{
                     kingMsg = msgReceived;
                 }
                 else {
-                    if (msgReceived.round % 2 != 0) {
+                    if (msgReceived.round % 2 != 0 && msgReceived.round != -5) {
                         MessagesReceivedOdd.set(msg.getIntProperty("id"), msgReceived);
                         for (int i = 0; i < MessagesReceivedOdd.size(); i++) {
                             //System.out.println("Nel vettore MessagesReceivedOdd alla posizione " + i + " c'è il messaggio " + MessagesReceivedOdd.get(i).message);
@@ -145,6 +158,7 @@ public class Consumer implements AutoCloseable{
                         //System.out.println("The process " + msg.getIntProperty("id") + " is ready to go in the next round");
                     }
                 }
+                //PROCESS CODE ENDS
 
             }catch(Exception ex){
                 inError = true;
