@@ -31,6 +31,8 @@ public class Main {
        /*Coordinator coordinator1 = new Coordinator(args[1], Integer.parseInt(args[0]), Integer.parseInt(args[2]));
        coordinator1.start(Integer.parseInt(args[0]),Integer.parseInt(args[3]),Integer.parseInt(args[2]));*/
 
+
+
     }
 
 }

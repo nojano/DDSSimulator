@@ -39,6 +39,10 @@ public class Consumer implements AutoCloseable{
 
     public static Coordinator coordinator;
 
+    public static boolean even=true;
+
+    public static boolean odd=true;
+
 
 
     public Consumer(String brokerUrl, String topicName, int totalNumberOfProcesses, int personalId, int numberOfByzantine, int rounds,/*Useful only for UpToYou*/int v){
@@ -91,7 +95,7 @@ public class Consumer implements AutoCloseable{
         }
     }
     private void DoWork(int totalNumberOfProcesses, int id, int nByzantine, int rounds, /*Useful only for UpToYou*/int v){
-        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine);                                      //PROCESS CODE
+        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);                                      //PROCESS CODE
         while(isRunning) {
             try {
                 var msg = consumer.receive();
@@ -125,7 +129,7 @@ public class Consumer implements AutoCloseable{
                 if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
                         //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
-                        coordinator.byzantineBehaviour = "UpToYou";                     //ATTENZIONE QUI
+                        coordinator.byzantineBehaviour = "WorstCase";                     //ATTENZIONE QUI
                         firstMessage = true;
                     } else {
                         //System.out.println("HO Ricevuto il messaggio da " + msg.getIntProperty("id") + " che dice " + msg.getStringProperty("message"));
@@ -139,19 +143,79 @@ public class Consumer implements AutoCloseable{
                     }
                 }
                 if(msgReceived.round == -4){
-                    kingMsg = msgReceived;
+                    if(Integer.parseInt(msgReceived.message) == 3){
+
+                        /*if(id % 2 == 0) {
+                            if(even == true) {
+                                Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                                MessagesReceived.set(msgReceived.id, msgByz);
+                                even = !even;
+                            }
+                            else{
+                                Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                                MessagesReceived.set(msgReceived.id, msgByz);
+                                even = !even;
+                            }
+                        }
+                        else{
+                            if(odd == true) {
+                                Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                                MessagesReceived.set(msgReceived.id, msgByz);
+                                odd = !odd;
+                            }
+                            else{
+                                Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                                MessagesReceived.set(msgReceived.id, msgByz);
+                                odd =!odd;
+                            }
+                        }
+                        */
+                        if(id % 2 == 0) {
+                            Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                            kingMsg = msgByz;
+                        }
+                        else{
+                            Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                            kingMsg = msgByz;
+                        }
+                    }
+                    else {
+                        kingMsg = msgReceived;
+                    }
                 }
                 else {
                     if (msgReceived.round % 2 != 0 && msgReceived.round != -5) {
                         MessagesReceivedOdd.set(msg.getIntProperty("id"), msgReceived);
-                        for (int i = 0; i < MessagesReceivedOdd.size(); i++) {
-                            //System.out.println("Nel vettore MessagesReceivedOdd alla posizione " + i + " c'è il messaggio " + MessagesReceivedOdd.get(i).message);
-                        }
                     }
-                    if (msgReceived.round % 2 == 0 && Integer.parseInt(msg.getStringProperty("message")) != -2) {   //ATTENTO QUI, QUESTO IF NON VA BENE PER LA CLASSE COORDINATOR LATO COORDINATORE
-                        MessagesReceived.set(msg.getIntProperty("id"), msgReceived);
-                        for (int i = 0; i < MessagesReceived.size(); i++) {
-                            //System.out.println("Nel vettore MessagesReceived alla posizione " + i + " c'è il messaggio " + MessagesReceived.get(i).message);
+                    if (msgReceived.round % 2 == 0 && Integer.parseInt(msg.getStringProperty("message")) != -2 && msgReceived.round != -5) {//ATTENTO QUI, QUESTO IF NON VA BENE PER LA CLASSE COORDINATOR LATO COORDINATORE
+                        if(Integer.parseInt(msgReceived.message) == 3){
+                            if(id % 2 == 0) {
+                                if(even == true) {
+                                    Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                                    MessagesReceived.set(msgReceived.id, msgByz);
+                                    //even = !even;
+                                }
+                                else{
+                                    Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                                    MessagesReceived.set(msgReceived.id, msgByz);
+                                    //even = !even;
+                                }
+                            }
+                            else{
+                                if(odd == true) {
+                                    Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                                    MessagesReceived.set(msgReceived.id, msgByz);
+                                    //odd = !odd;
+                                }
+                                else{
+                                    Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                                    MessagesReceived.set(msgReceived.id, msgByz);
+                                    //odd =!odd;
+                                }
+                            }
+                        }
+                        else {
+                            MessagesReceived.set(msg.getIntProperty("id"), msgReceived);
                         }
                     }
                     if (Integer.parseInt(msg.getStringProperty("message")) == -2) {
