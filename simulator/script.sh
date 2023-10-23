@@ -10,7 +10,12 @@ R=$((R - 1))
 
 echo "Please enter how many Byzantine processes you want"
 read B
-echo "The Byzantine processes are chosen randomly. Please enter 1 if you want the Byzantine process to send no message; enter 2 if the Byzantine process must send 1."
+echo "The Byzantine processes are chosen randomly." 
+echo" Please enter 1 if you want the Byzantine process to send no message;"
+echo" Please enter 2 if the Byzantine process must send 1;"
+echo "Please enter 3 if you want to choose the decisions of the correct processes and the Byzantine process makes its decision based on what is the majority in the decisions;"
+echo "Please enter 4 if you want to choose the decisions of the correct processes and the Byzantine process makes its decision based on what is the majority in the decisions; "
+echo "Please enter 5 for the worst case;"
 D=1
 read C
 docker run -d --network host coordinator $N $B $R $D
@@ -41,6 +46,30 @@ elif [ "$C" -eq 3 ]; then
     	echo "Please enter the initialization value of $i"
 	read V
         docker run -d --network host processuptoyou $N $B $R $C $i $V
+        echo "I have done with process number $i"
+        # Add -d to the command above to not show the container running
+    done
+elif [ "$C" -eq 4 ]; then
+    docker build ./processUpToYou2 -t processuptoyou2
+
+    for ((i = 0; i < N; i++))
+    do
+    	echo "Please enter the initialization value of $i"
+	read V
+        docker run -d --network host processuptoyou2 $N $B $R $C $i $V
+        echo "I have done with process number $i"
+        # Add -d to the command above to not show the container running
+    done
+elif [ "$C" -eq 5 ]; then
+    echo "In order to reach the worst case, you have to initialize the even process with 1 and the odd ones with 0"
+    docker build ./worstCase -t worstcase
+
+    for ((i = 0; i < N; i++))
+    do
+    	echo "Please enter the value for $i"
+	read V
+        docker run -d --network host worstcase $N $B $R $C $i $V
+       
         echo "I have done with process number $i"
         # Add -d to the command above to not show the container running
     done

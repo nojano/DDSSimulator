@@ -39,11 +39,11 @@ public class Coordinator {
 
         //COORDINATOR CODE BEGINS
 
-        /*Consumer consumer = new Consumer("tcp://127.0.0.1:61616", "topic", numberOfProcesses, -1, Integer.parseInt(howManyByzantinePerRound),  howManyRounds, 0);
-        consumer.Initialize(consumer);*/
+        Consumer consumer = new Consumer("tcp://127.0.0.1:61616", "topic", numberOfProcesses, -1, Integer.parseInt(howManyByzantinePerRound),  howManyRounds, 0);
+        consumer.Initialize(consumer);
     }
 
-   /*public static void start(int numberOfProcesses, int choiceByzantine, int howManyRounds){
+   public static void start(int numberOfProcesses, int choiceByzantine, int howManyRounds){
        int zero = 0;
        int one = 0;
         if(rounds<=howManyRounds){
@@ -75,14 +75,14 @@ public class Coordinator {
 
                     }
                 }
-                if(zero>=numberOfProcesses-2*Integer.parseInt(byzantinePerRounds)){
+                if(zero>=numberOfProcesses-Integer.parseInt(byzantinePerRounds)){
                     choiceDone = true;
                     Space(5);
                     System.out.println("The consensus has been reached in " + rounds + " rounds and the value is " + 0);
                     System.out.println("The total number of exchanged messages is " + howManyMessages);
                     Space(2);
                 }
-                if(one>=numberOfProcesses-2*Integer.parseInt(byzantinePerRounds)){
+                if(one>=numberOfProcesses-Integer.parseInt(byzantinePerRounds)){
                     choiceDone = true;
                     Space(5);
                     System.out.println("The consensus has been reached in " + rounds + " rounds and the value is " + 1);
@@ -118,7 +118,7 @@ public class Coordinator {
         Random random = new Random();
         String numeroCasuale = String.valueOf(random.nextInt(nProcesses));
         return numeroCasuale;
-    }*/
+    }
 
 
 //COORDINATOR CODE ENDS

@@ -42,7 +42,7 @@ public class Garay {
 
     static boolean firstByzantine = true;
 
-    static int byzantineUpToYou=0;
+    static int byzantineUpToYou=1;
 
     public Garay(int totalNumberOfProcesses, int idOfTheProcess, int numberOfByzantines, int totalNumberOfRounds){
         this.round = 0;
@@ -986,8 +986,8 @@ public class Garay {
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
             }*/
         }
-        else if(coordinator.byzantineBehaviour == "WorstCase"){
-            if(firstInitialization == true){
+        else if(coordinator.byzantineBehaviour == "WorstCaseEven"){
+            /*if(firstInitialization == true){
                 v = value;
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
@@ -1008,7 +1008,7 @@ public class Garay {
                 System.out.print("The vector of byzantines is: [");
                 for (int i = 0; i < byzantinesInThisRound.length; i++) {
                     if (firstByzantine == true) {
-                        byzantinesInThisRound[i]=0;
+                        byzantinesInThisRound[i]=2;
                         firstByzantine=false;
                     }
                     else{
@@ -1109,11 +1109,9 @@ public class Garay {
                     Space(1);
                 }
                 System.out.print("The vector of byzantines is: [");
-                if(byzantineUpToYou<totalRounds-byzantinesInThisRound.length) {
-                    byzantineUpToYou=((round) % totalNumberOfProcesses) + 1;
-                    if(byzantineUpToYou==8){
-                        byzantineUpToYou = 6;
-                    }
+                byzantineUpToYou++;
+                if(byzantineUpToYou==7) {
+                    byzantineUpToYou--;
                 }
                 for (int i = 0; i < byzantinesInThisRound.length; i++) {
                     byzantinesInThisRound[i] = byzantineUpToYou + i;
@@ -1189,11 +1187,7 @@ public class Garay {
                     }
 
                 }
-
-                king = (round % totalNumberOfProcesses) + 1;
-                if(king == 8){
-                    king=6;
-                }
+                king = king + 1;
                 String kingChoice = "null";
                 System.out.println("The king of the round is the process number " + king);
                 Space(1);
@@ -1225,8 +1219,9 @@ public class Garay {
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
-            }
+            }*/
         }
+
     }
 
 
