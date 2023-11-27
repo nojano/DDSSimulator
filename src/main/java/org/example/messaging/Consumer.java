@@ -49,7 +49,7 @@ public class Consumer implements AutoCloseable{
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceived);
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceivedOdd);
 
-       /* coordinator = new Coordinator(String.valueOf(numberOfByzantine),totalNumberOfProcesses,rounds);*/     //PROCESS CODE
+        coordinator = new Coordinator(String.valueOf(numberOfByzantine),totalNumberOfProcesses,rounds);     //PROCESS CODE
         var factory = new ActiveMQConnectionFactory(brokerUrl);
         try{
             connection = factory.createConnection();
@@ -95,7 +95,7 @@ public class Consumer implements AutoCloseable{
         }
     }
     private void DoWork(int totalNumberOfProcesses, int id, int nByzantine, int rounds, /*Useful only for UpToYou*/int v){
-        /*Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);  */                                    //PROCESS CODE
+        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);                                      //PROCESS CODE
         while(isRunning) {
             try {
                 var msg = consumer.receive();
@@ -105,7 +105,7 @@ public class Consumer implements AutoCloseable{
 
                 //COORDINATOR CODE BEGINS
 
-                if(msgReceived.id != -1 && msgReceived.round != -5) {
+                /*if(msgReceived.id != -1 && msgReceived.round != -5) {
                     Coordinator.howManyMessages++;
                     if(Integer.parseInt(msgReceived.message) == -2){
                         Coordinator.howManyMessages--;
@@ -121,13 +121,13 @@ public class Consumer implements AutoCloseable{
                 }
                 if (msgReceived.id != -1 && msgReceived.round == -5){
                     Coordinator.choices[msgReceived.id] = Integer.parseInt(msgReceived.message);
-                }
+                }*/
 
               //COORDINATOR CODE ENDS
 
 
                 // PROCESS CODE BEGINS
-                /*if(msg.getIntProperty("id") == -1) {
+                if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
                         //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
                         coordinator.byzantineBehaviour = "WorstCaseEven";                     //ATTENZIONE QUI
@@ -212,7 +212,7 @@ public class Consumer implements AutoCloseable{
                     if (Integer.parseInt(msg.getStringProperty("message")) == -2) {
                         //System.out.println("The process " + msg.getIntProperty("id") + " is ready to go in the next round");
                     }
-                }*/
+                }
                 //PROCESS CODE ENDS
 
             }catch(Exception ex){

@@ -1,9 +1,14 @@
 version: '3.3'
+
 services:
   activemq:
-    image: activemq
     build: ./
     container_name: activemq
+    image: activemq
     ports:
       - 61616:61616
       - 8161:8161
+    volumes:
+      - /home/nojano/Scrivania/thesisTry/activeMQ/volumes/tshark:/var/activemq/activemq/bin/tshark
+
+
