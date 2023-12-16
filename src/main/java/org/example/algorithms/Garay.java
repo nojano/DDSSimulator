@@ -990,7 +990,7 @@ public class Garay {
             }*/
         }
         else if(coordinator.byzantineBehaviour == "WorstCaseEven"){
-            if(firstInitialization == true){
+            /*if(firstInitialization == true){
                 v = value;
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
@@ -1223,6 +1223,8 @@ public class Garay {
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
             }
+
+             */
         }
 
 

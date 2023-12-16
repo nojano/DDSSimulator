@@ -1,6 +1,7 @@
 package org.example.messaging;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.example.algorithms.Bonnet;
 import org.example.algorithms.Garay;
 import org.example.models.Message;
 
@@ -32,6 +33,7 @@ public class Consumer implements AutoCloseable{
 
     public static ArrayList<Message> MessagesReceivedOdd = new ArrayList<>();
 
+    public static ArrayList<Message> MessagesReceivedThree = new ArrayList<>();
     public static Message kingMsg = new Message(-4,-4,"-4");
 
 
@@ -43,11 +45,18 @@ public class Consumer implements AutoCloseable{
 
     public static boolean odd=true;
 
+    public static boolean one = true;
+
+    public static boolean two = false;
+
+    public static boolean three = false;
+
 
 
     public Consumer(String brokerUrl, String topicName, int totalNumberOfProcesses, int personalId, int numberOfByzantine, int rounds,/*Useful only for UpToYou*/int v){
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceived);
         InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceivedOdd);
+        InitializeMessagesDelivery(totalNumberOfProcesses, MessagesReceivedThree);
 
         coordinator = new Coordinator(String.valueOf(numberOfByzantine),totalNumberOfProcesses,rounds);     //PROCESS CODE
         var factory = new ActiveMQConnectionFactory(brokerUrl);
@@ -95,7 +104,8 @@ public class Consumer implements AutoCloseable{
         }
     }
     private void DoWork(int totalNumberOfProcesses, int id, int nByzantine, int rounds, /*Useful only for UpToYou*/int v){
-        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);                                      //PROCESS CODE
+        //Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);   //GARAY PROCESS                                   //PROCESS CODE
+        Bonnet bonnet = new Bonnet(totalNumberOfProcesses,id,nByzantine, rounds);
         while(isRunning) {
             try {
                 var msg = consumer.receive();
@@ -130,19 +140,21 @@ public class Consumer implements AutoCloseable{
                 if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
                         //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
-                        coordinator.byzantineBehaviour = "WorstCaseEven";                     //ATTENZIONE QUI
+                        coordinator.byzantineBehaviour = "NoMessage";                     //ATTENZIONE QUI
                         firstMessage = true;
                     } else {
                         //System.out.println("HO Ricevuto il messaggio da " + msg.getIntProperty("id") + " che dice " + msg.getStringProperty("message"));
                         coordinator.byzantineArray = msg.getStringProperty("message");
                         //System.out.println("mi è arrivato il messaggio dei bizantini ed è " + coordinator.byzantineArray);
                         Thread worker1 = new Thread(() -> {
-                            garay.startEven(coordinator,v);
+                            //garay.startEven(coordinator,v);  //GARAY PROCESS
+                            bonnet.start(coordinator,v);
                         });
                         worker1.start();
                         firstMessage = false;
                     }
                 }
+
                 if(msgReceived.round == -4){
                     if(Integer.parseInt(msgReceived.message) == 3){
                         if(id % 2 == 0) {
@@ -170,9 +182,13 @@ public class Consumer implements AutoCloseable{
                             }
                         }
                     }
+
                     else {
                         kingMsg = msgReceived;
                     }
+                }
+                else if(msgReceived.round== -6) {
+                    MessagesReceivedThree.set(msg.getIntProperty("id"), msgReceived);
                 }
                 else {
                     if (msgReceived.round % 2 != 0 && msgReceived.round != -5) {

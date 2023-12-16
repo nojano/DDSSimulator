@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.algorithms.Bonnet;
 import org.example.algorithms.Garay;
 import org.example.messaging.Consumer;
 import org.example.messaging.Coordinator;
@@ -23,14 +24,14 @@ public class Main {
         try{
             Thread.sleep(1500*7);
         }catch(Exception ignored){}
-        Garay.GarayInitilize(Integer.parseInt(args[4]));
+        //Garay.GarayInitilize(Integer.parseInt(args[4]));  //Garay process
+        Bonnet.BonnetInitialize(Integer.parseInt(args[4]));
 
 
         //COORDINATOR CODE
 
 /*       Coordinator coordinator1 = new Coordinator(args[1], Integer.parseInt(args[0]), Integer.parseInt(args[2]));
        coordinator1.start(Integer.parseInt(args[0]),Integer.parseInt(args[3]),Integer.parseInt(args[2]));*/
-
 
 
     }
