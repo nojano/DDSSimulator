@@ -67,7 +67,13 @@ public class Garay {
     public static void startEven(Coordinator coordinator, /*Useful only for UpToYou*/int value) {
         //System.out.println("BYZANTINE DO " + coordinator.byzantineBehaviour);
         if(coordinator.byzantineBehaviour == "NoMessage") { //THE BYZANTINE DOES NOT SEND ANY MESSAGE
-            /*System.out.println("The byzantine will not send message. Just for computational reason, the value that is chosen by the byzantine process will be -1");
+            if(firstInitialization == true){
+                v = value;
+                System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
+                firstInitialization = false;
+            }
+            Space(1);
+            System.out.println("The byzantine will not send message. Just for computational reason, the value that is chosen by the byzantine process will be -1");
             Space(1);
             if (round % 2 == 0) {
                 System.out.println("ROUND " + round + ": Universal exchange");
@@ -277,7 +283,7 @@ public class Garay {
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
-            }*/
+            }
         }
         else if(coordinator.byzantineBehaviour == "Message1"){ //THE BYZANTINE SEND OR 0 OR 1
             /*System.out.println("The value chosen by the byzantine is always 1");

@@ -25,7 +25,7 @@ public class Main {
             Thread.sleep(1500*7);
         }catch(Exception ignored){}
         //Garay.GarayInitilize(Integer.parseInt(args[4]));  //Garay process
-        Bonnet.BonnetInitialize(Integer.parseInt(args[4]));
+        Bonnet.BonnetInitialize(Integer.parseInt(args[4]));  //Bonnet process
 
 
         //COORDINATOR CODE
