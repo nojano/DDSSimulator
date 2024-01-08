@@ -82,6 +82,7 @@ public class Bonnet {
         if(coordinator.byzantineBehaviour == "NoMessage") {
          /*   if (firstInitialization == true) {
                 v = value;
+                Space(2);
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
             }
@@ -233,7 +234,15 @@ public class Bonnet {
                                     SV[i] = "-1";
                                     go = false;
                                 }
-                            }secondRound = false;
+                            }
+                            if (go == true) {
+                                    SV[i] = ArrayMessages().get(i).message;
+                            }
+                        }
+                    System.out.print("The vector SV is [");
+                    VectorPrinter(SV);
+                    }
+                    secondRound = false;
                     thirdRound = true;
                     Producer producer2 = new Producer("tcp://127.0.0.1:61616", "topic");
                     Producer.Initialize(producer2, -5, idOfTheProcess, String.valueOf(v));
@@ -241,13 +250,6 @@ public class Bonnet {
                     round++;
                     Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                     Producer.Initialize(producer1, round, idOfTheProcess, "-2");
-                            if (go == true) {
-                                    SV[i] = ArrayMessages().get(i).message;
-                            }
-                        }
-                        System.out.print("The vector SV is [");
-                        VectorPrinter(SV);
-                    }
 
                 }
                 else if (firstRound == false && secondRound == false && thirdRound == true) {
@@ -355,7 +357,7 @@ public class Bonnet {
                             v = 1;
                             flag = true;
                         }
-                        if(w_0>3*numberOfByzantines){
+                        else if(w_0>3*numberOfByzantines){
                             v = 0;
                             flag = true;
                         }
@@ -402,8 +404,8 @@ public class Bonnet {
                 System.out.println("Maintaining round");
             }*/
         }
-        if(coordinator.byzantineBehaviour == "WorstCase"){
-            if (firstInitialization == true) {
+        else if(coordinator.byzantineBehaviour == "WorstCase"){
+            /*if (firstInitialization == true) {
                 v = value;
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
@@ -422,10 +424,10 @@ public class Bonnet {
                         Space(1);
                     }
                     System.out.print("The vector of byzantines is: [");
-                    /*for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
+                    *//*for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
                         byzantinesInThisRound[i] = GoGoGo(coordinator.ByzantineInTheRound())[i];
                         System.out.print(GoGoGo(coordinator.ByzantineInTheRound())[i] + ", ");
-                    }*/
+                    }*//*
                     byz = -1;
                     for(int i=0; i<numberOfByzantines; i++){
                         byz++;
@@ -462,12 +464,12 @@ public class Bonnet {
                         w_0 = 0;
                         for (int i=0; i< ArrayMessages().size(); i++) {
                             boolean go = true;
-                            /*for (int j = 0; j < byzantinesInThisRound.length; j++) {
+                            *//*for (int j = 0; j < byzantinesInThisRound.length; j++) {
                                 if (i == byzantinesInThisRound[j]) {
                                     PV[i] = "-1";
                                     go = false;
                                 }
-                            }*/
+                            }*//*
                             if(go == true){
                                 if(Integer.parseInt(ArrayMessages().get(i).message) == 3){
                                     if(idOfTheProcess%2 == 0){
@@ -533,10 +535,10 @@ public class Bonnet {
                         Space(1);
                     }
                     System.out.print("The vector of byzantines is: [");
-                    /*for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
+                    *//*for (int i = 0; i < GoGoGo(coordinator.ByzantineInTheRound()).length; i++) {
                         byzantinesInThisRound[i] = GoGoGo(coordinator.ByzantineInTheRound())[i];
                         System.out.print(GoGoGo(coordinator.ByzantineInTheRound())[i] + ", ");
-                    }*/
+                    }*//*
                     for(int i=0; i<numberOfByzantines; i++){
                         byz++;
                         byzantinesInThisRound[i] = byz;
@@ -762,7 +764,7 @@ public class Bonnet {
             }
             else {
                 System.out.println("Maintaining round");
-            }
+            }*/
         }
     }
 

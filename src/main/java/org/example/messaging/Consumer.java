@@ -3,6 +3,7 @@ package org.example.messaging;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.example.algorithms.Bonnet;
 import org.example.algorithms.Garay;
+import org.example.algorithms.Sasaki;
 import org.example.models.Message;
 
 import javax.jms.*;
@@ -104,8 +105,9 @@ public class Consumer implements AutoCloseable{
         }
     }
     private void DoWork(int totalNumberOfProcesses, int id, int nByzantine, int rounds, /*Useful only for UpToYou*/int v){
-        //Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);   //GARAY PROCESS                                   //PROCESS CODE
-        Bonnet bonnet = new Bonnet(totalNumberOfProcesses,id,nByzantine, rounds);  //BONNET PROCESS
+        Garay garay = new Garay(totalNumberOfProcesses,id,nByzantine, rounds);   //GARAY PROCESS                                   //PROCESS CODE
+        //Bonnet bonnet = new Bonnet(totalNumberOfProcesses,id,nByzantine, rounds);  //BONNET PROCESS
+        //Sasaki sasaki = new Sasaki(totalNumberOfProcesses,id,nByzantine, rounds);  //SASAKI PROCESS
         while(isRunning) {
             try {
                 var msg = consumer.receive();
@@ -140,15 +142,16 @@ public class Consumer implements AutoCloseable{
                 if(msg.getIntProperty("id") == -1) {
                     if (firstMessage == false) {
                         //coordinator.byzantineBehaviour = msg.getStringProperty("message"); //The first message is the behaviour of the byzantines
-                        coordinator.byzantineBehaviour = "WorstCase";                     //ATTENZIONE QUI
+                        coordinator.byzantineBehaviour = "WorstCaseEven";                     //ATTENZIONE QUI
                         firstMessage = true;
                     } else {
                         //System.out.println("HO Ricevuto il messaggio da " + msg.getIntProperty("id") + " che dice " + msg.getStringProperty("message"));
                         coordinator.byzantineArray = msg.getStringProperty("message");
                         //System.out.println("mi è arrivato il messaggio dei bizantini ed è " + coordinator.byzantineArray);
                         Thread worker1 = new Thread(() -> {
-                            //garay.startEven(coordinator,v);  //GARAY PROCESS
-                            bonnet.start(coordinator,v);   //BONNET PROCESS
+                            garay.startEven(coordinator,v);  //GARAY PROCESS
+                            //bonnet.start(coordinator,v);   //BONNET PROCESS
+                            //sasaki.start(coordinator,v);    //SASAKI PROCESS
                         });
                         worker1.start();
                         firstMessage = false;
@@ -157,8 +160,11 @@ public class Consumer implements AutoCloseable{
 
                 if(msgReceived.round == -4){
                     if(Integer.parseInt(msgReceived.message) == 3){
-                        if(id % 2 == 0) {
-                            if(even == true) {
+                        kingMsg = msgReceived;
+                        /*if(id % 2 == 0) {
+                            Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
+                            kingMsg = msgByz;
+                            *//*if(even == true) {
                                 Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
                                 kingMsg = msgByz;
                                 even = !even;
@@ -167,10 +173,12 @@ public class Consumer implements AutoCloseable{
                                 Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
                                 kingMsg = msgByz;
                                 even = !even;
-                            }
+                            }*//*
                         }
                         else{
-                            if(even == true) {
+                            Message msgByz = new Message(msgReceived.round, msgReceived.id, "0");
+                            kingMsg = msgByz;
+                            *//*if(even == true) {
                                 Message msgByz = new Message(msgReceived.round, msgReceived.id, "1");
                                 kingMsg = msgByz;
                                 even = !even;
@@ -180,7 +188,7 @@ public class Consumer implements AutoCloseable{
                                 kingMsg = msgByz;
                                 even = !even;
                             }
-                        }
+                        }*/
                     }
 
                     else {
@@ -195,7 +203,7 @@ public class Consumer implements AutoCloseable{
                         MessagesReceivedOdd.set(msg.getIntProperty("id"), msgReceived);
                     }
                     if (msgReceived.round % 2 == 0 && Integer.parseInt(msg.getStringProperty("message")) != -2 && msgReceived.round != -5) {//ATTENTO QUI, QUESTO IF NON VA BENE PER LA CLASSE COORDINATOR LATO COORDINATORE
-                        MessagesReceived.set(msg.getIntProperty("id"), msgReceived); // BONNET PROCESS
+                        MessagesReceived.set(msg.getIntProperty("id"), msgReceived); // BONNET PROCESS  // SASAKI PROCESS
                         /*if(Integer.parseInt(msgReceived.message) == 3){      //   GARAY PROCESS
                             if(id % 2 == 0) {
                                 if(odd == true) {

@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.algorithms.Bonnet;
 import org.example.algorithms.Garay;
+import org.example.algorithms.Sasaki;
 import org.example.messaging.Consumer;
 import org.example.messaging.Coordinator;
 import org.example.messaging.Producer;
@@ -24,8 +25,9 @@ public class Main {
         try{
             Thread.sleep(1500*7);
         }catch(Exception ignored){}
-        //Garay.GarayInitilize(Integer.parseInt(args[4]));  //Garay process
-        Bonnet.BonnetInitialize(Integer.parseInt(args[4]));  //Bonnet process
+        Garay.GarayInitilize(Integer.parseInt(args[4]));  //Garay process
+        //Bonnet.BonnetInitialize(Integer.parseInt(args[4]));  //Bonnet process
+        //Sasaki.SasakiInitialize(Integer.parseInt(args[4])); //Sasaki process
 
 
         //COORDINATOR CODE

@@ -67,7 +67,7 @@ public class Garay {
     public static void startEven(Coordinator coordinator, /*Useful only for UpToYou*/int value) {
         //System.out.println("BYZANTINE DO " + coordinator.byzantineBehaviour);
         if(coordinator.byzantineBehaviour == "NoMessage") { //THE BYZANTINE DOES NOT SEND ANY MESSAGE
-            if(firstInitialization == true){
+            /*if(firstInitialization == true){
                 v = value;
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
@@ -283,7 +283,7 @@ public class Garay {
                 round++;
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
-            }
+            }*/
         }
         else if(coordinator.byzantineBehaviour == "Message1"){ //THE BYZANTINE SEND OR 0 OR 1
             /*System.out.println("The value chosen by the byzantine is always 1");
@@ -996,7 +996,7 @@ public class Garay {
             }*/
         }
         else if(coordinator.byzantineBehaviour == "WorstCaseEven"){
-            /*if(firstInitialization == true){
+            if(firstInitialization == true){
                 v = value;
                 System.out.println("I'm the process number " + idOfTheProcess + "and my value is " + v);
                 firstInitialization = false;
@@ -1036,12 +1036,12 @@ public class Garay {
                     }
                 }
                 if(byzantine == true){
-                    v = 3;
+                    //v = 3;
                     Space(1);
-                    System.out.println("I'm byzantine in this round, so my value v is 1 for the odd correct processes and 0 for the even ones");
+                    System.out.println("I'm byzantine in this round.");
                     Space(1);
                     for (int i = 0; i < MVValues.length; i++) {
-                        MVValues[i] = String.valueOf(1);
+                        MVValues[i] = String.valueOf(3);
                     }
                     MV = String.join(", ", MVValues);
                 }
@@ -1119,12 +1119,22 @@ public class Garay {
                 }
                 System.out.print("The vector of byzantines is: [");
                 byzantineUpToYou++;
-                if(byzantineUpToYou==7) {
-                    byzantineUpToYou--;
+                if(byzantineUpToYou == totalNumberOfProcesses){
+                    byzantineUpToYou = 0;
                 }
-                for (int i = 0; i < byzantinesInThisRound.length; i++) {
-                    byzantinesInThisRound[i] = byzantineUpToYou + i;
-                    System.out.print(byzantinesInThisRound[i] + ", ");
+                if(byzantineUpToYou==totalNumberOfProcesses-1) {
+                    byzantineUpToYou--;
+                    for (int i = 0; i < byzantinesInThisRound.length; i++) {
+                        byzantinesInThisRound[i] = byzantineUpToYou;
+                        System.out.print(byzantinesInThisRound[i] + ", ");
+                    }
+                    byzantineUpToYou ++;
+                }
+                else {
+                    for (int i = 0; i < byzantinesInThisRound.length; i++) {
+                        byzantinesInThisRound[i] = byzantineUpToYou;
+                        System.out.print(byzantinesInThisRound[i] + ", ");
+                    }
                 }
                 System.out.println("] ");
                 Space(1);
@@ -1167,10 +1177,10 @@ public class Garay {
                         for (int j = 0; j < Consumer.MessagesReceivedOdd.size(); j++) {
                             if(ExtrapolateInt(i, Consumer.MessagesReceivedOdd)[j] == 3){
                                 if(idOfTheProcess % 2 == 0) {
-                                    ECHO[i][j] = 0;
+                                    ECHO[i][j] = 1;
                                 }
                                 else{
-                                    ECHO[i][j] = 1;
+                                    ECHO[i][j] = 0;
                                 }
                             }
                             else {
@@ -1196,7 +1206,7 @@ public class Garay {
                     }
 
                 }
-                king = king + 1;
+                king = byzantineUpToYou;
                 String kingChoice = "null";
                 System.out.println("The king of the round is the process number " + king);
                 Space(1);
@@ -1215,6 +1225,14 @@ public class Garay {
                 kingChoice = Consumer.kingMsg.message;
 
                 if(byzantine == false) {
+                    if(Integer.parseInt(kingChoice) == 3){
+                        if (idOfTheProcess %2 == 0){
+                            kingChoice = "1";
+                        }
+                        else{
+                            kingChoice = "0";
+                        }
+                    }
                     if (Integer.parseInt(kingChoice) == 0 || Integer.parseInt(kingChoice) == 1) {
                         if (C < (totalNumberOfProcesses - 2 * numberOfByzantines)) {
                             v = Integer.parseInt(kingChoice);
@@ -1229,8 +1247,6 @@ public class Garay {
                 Producer producer1 = new Producer("tcp://127.0.0.1:61616", "topic");
                 Producer.Initialize(producer1, round, idOfTheProcess, "-2");
             }
-
-             */
         }
 
 
