@@ -2,7 +2,7 @@
 
 docker build ./coordinator -t coordinator
 
-echo "Please enter 1 for the Garay algorithm, enter 2 for the Bonnet algorithm"
+echo "Please enter 1 for the Garay algorithm, enter 2 for the Bonnet algorithm, enter 3 for the Sasaki algorithm"
 read A
 case $A in 
 	
@@ -153,7 +153,49 @@ case $A in
 	fi
 	
 	  ;;
-	    
+	  
+	
+	3)
+	cd Sasaki
+	
+	echo "Please enter how many processes you want to instantiate"
+	read N
+	echo "Please enter how many rounds the algorithm must execute"
+	read R
+	R=$((R - 1))
+
+	echo "Please enter how many Byzantine processes you want"
+	read B
+	echo " Please enter 1 if you want the Byzantine process to send no message;"
+	echo " Please enter 2 if you want the worst case;"
+	D=1
+	read C
+	docker run -d --network host coordinator $N $B $R $D   
+	if [ "$C" -eq 1 ]; then
+	    docker build ./processNoMsg -t sasakiprocessnomsg
+
+	    for ((i = 0; i < N; i++))
+	    do
+		echo "Please enter the initialization value of $i"
+		read V
+		docker run -d --network host sasakiprocessnomsg $N $B $R $C $i $V
+		echo "I have done with process number $i"
+		# Add -d to the command above to not show the container running
+	    done
+	elif [ "$C" -eq 2 ]; then
+	    docker build ./worstCase -t sasakiworstcase
+
+	    for ((i = 0; i < N; i++))
+	    do
+		echo "Please enter the initialization value of $i"
+		read V
+		docker run -d --network host sasakiworstcase $N $B $R $C $i $V
+		echo "I have done with process number $i"
+		# Add -d to the command above to not show the container running
+	    done
+	fi
+	
+	  ;;
 	    
 	    
 	    
